@@ -1,0 +1,134 @@
+### Variables globales
+@baseUrl = http://localhost:3000
+
+### ==================== USUARIOS ====================
+
+### Obtener todos los usuarios
+GET {{baseUrl}}/api/users
+
+### Obtener un usuario por ID
+GET {{baseUrl}}/api/users/1
+
+### Crear un nuevo usuario
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{
+    "nombre": "Julian2",
+    "contraseña": "123456",
+    "rol": "Maestro"
+}
+
+### Actualizar un usuario
+PUT {{baseUrl}}/api/users/1
+Content-Type: application/json
+
+{
+    "nombre": "Juan Pérez Actualizado",
+    "contraseña": "nueva123",
+    "rol": "Maestro"
+}
+
+### Eliminar un usuario
+DELETE {{baseUrl}}/api/users/1
+
+### ==================== ALUMNOS ====================
+
+### Obtener todos los alumnos
+GET {{baseUrl}}/api/alumnos
+
+### Obtener un alumno por ID
+GET {{baseUrl}}/api/alumnos/1
+
+### Crear un nuevo alumno
+POST {{baseUrl}}/api/alumnos
+Content-Type: application/json
+
+{
+    "nombre": "María García",
+    "grupo": "3A"
+}
+
+### Actualizar un alumno
+PUT {{baseUrl}}/api/alumnos/1
+Content-Type: application/json
+
+{
+    "nombre": "María García Actualizada",
+    "grupo": "3B"
+}
+
+### Eliminar un alumno
+DELETE {{baseUrl}}/api/alumnos/1
+
+### ==================== JUSTIFICANTES ====================
+
+### Obtener todos los justificantes
+GET {{baseUrl}}/api/justificantes
+
+### Obtener un justificante por ID
+GET {{baseUrl}}/api/justificantes/3
+
+### Crear un nuevo justificante
+POST {{baseUrl}}/api/justificantes
+Content-Type: application/json
+
+{
+    "tipo_justificante": "Enfermedad",
+    "departamento": "Enfermeria",
+    "alumno_id": 2,
+    "tutor": "Ana García",
+    "motivo": "Gripe",
+    "fecha_inicio": "2025-06-30",
+    "tiempo_dias": 3
+}
+
+### Actualizar un justificante
+PUT {{baseUrl}}/api/justificantes/3
+Content-Type: application/json
+
+{
+    "tipo_justificante": "Familiar",
+    "departamento": "Perfectura",
+    "alumno_id": 2,
+    "tutor": "Ana García",
+    "motivo": "Asunto familiar",
+    "fecha_inicio": "2025-06-30",
+    "tiempo_dias": 11
+}
+
+### Eliminar un justificante
+DELETE {{baseUrl}}/api/justificantes/3
+
+### ==================== ENTRADAS Y SALIDAS ====================
+
+### Obtener todas las entradas y salidas
+GET {{baseUrl}}/api/entradas-salidas
+
+### Obtener una entrada/salida por ID
+GET {{baseUrl}}/api/entradas-salidas/3
+
+### Registrar una nueva entrada
+POST {{baseUrl}}/api/entradas-salidas
+Content-Type: application/json
+
+{
+    "nombre_visita": "Carlos Rodríguez",
+    "alumno_id": 3,
+    "motivo": "Entrega de documentos",
+    "tipo": "Entrada"
+}
+
+### Actualizar un registro
+PUT {{baseUrl}}/api/entradas-salidas/2
+Content-Type: application/json
+
+{
+    "nombre_visita": "Carlos Rodríguezzz",
+    "alumno_id": 3,
+    "motivo": "Recoger documentos",
+    "tipo": "Salida"
+}
+
+### Eliminar un registro
+DELETE {{baseUrl}}/api/entradas-salidas/2
