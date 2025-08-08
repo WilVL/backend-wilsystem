@@ -6,7 +6,7 @@ exports.getAllEntradasSalidas = async (req, res) => {
         const [rows] = await pool.query(`
             SELECT es.id, es.nombre_visita, es.alumno_id, es.motivo, es.tipo, 
                    DATE_FORMAT(es.fecha_registro, '%Y-%m-%d %H:%i:%s') as fecha_registro,
-                   a.nombre as nombre_alumno 
+                   a.nombre as nombre_alumno, a.grupo as grupo_alumno
             FROM EntradasSalidas es 
             LEFT JOIN Alumnos a ON es.alumno_id = a.id
         `);
@@ -22,7 +22,7 @@ exports.getEntradaSalidaById = async (req, res) => {
         const [rows] = await pool.query(`
             SELECT es.id, es.nombre_visita, es.alumno_id, es.motivo, es.tipo,
                    DATE_FORMAT(es.fecha_registro, '%Y-%m-%d %H:%i:%s') as fecha_registro,
-                   a.nombre as nombre_alumno 
+                   a.nombre as nombre_alumno, a.grupo as grupo_alumno
             FROM EntradasSalidas es 
             LEFT JOIN Alumnos a ON es.alumno_id = a.id 
             WHERE es.id = ?

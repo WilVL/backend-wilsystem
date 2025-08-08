@@ -3,6 +3,16 @@
 
 ### ==================== USUARIOS ====================
 
+### Crear usuario inicial (solo si no hay usuarios)
+POST {{baseUrl}}/api/users/initial
+Content-Type: application/json
+
+{
+    "nombre": "admin",
+    "contraseña": "123456",
+    "rol": "Direccion"
+}
+
 ### Obtener todos los usuarios
 GET {{baseUrl}}/api/users
 
@@ -46,7 +56,9 @@ Content-Type: application/json
 
 {
     "nombre": "María García",
-    "grupo": "3A"
+    "grupo": "3A",
+    "turno": "Matutino",
+    "ingreso": 2022
 }
 
 ### Actualizar un alumno
@@ -55,11 +67,35 @@ Content-Type: application/json
 
 {
     "nombre": "María García Actualizada",
-    "grupo": "3B"
+    "grupo": "3B",
+    "turno": "Vespertino",
+    "ingreso": 2023
 }
 
 ### Eliminar un alumno
 DELETE {{baseUrl}}/api/alumnos/1
+
+### Eliminar un grupo de alumnos (excepto algunos)
+DELETE {{baseUrl}}/api/alumnos/grupo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tYnJlIjoiYWRtaW4iLCJyb2wiOiJEaXJlY2Npb24iLCJpYXQiOjE3NTI0Njk3NDksImV4cCI6MTc1MjU1NjE0OX0.c-lXDX0IXr5d3z4Xo96DsT_yt2avY5TwmZkduA0TI2s
+Content-Type: application/json
+
+{
+    "grupo": "1K",
+    "excluirIds": [62]
+}
+
+### Editar un grupo de alumnos (excepto algunos)
+PUT {{baseUrl}}/api/alumnos/grupo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tYnJlIjoiYWRtaW4iLCJyb2wiOiJEaXJlY2Npb24iLCJpYXQiOjE3NTI4Nzc0MDQsImV4cCI6MTc1Mjk2MzgwNH0.r_rm4P5TLBaccbZWlHQXMihm2sZhVCwSuCaolly5HQo
+Content-Type: application/json
+
+{
+    "grupo": "1A",
+    "nuevoGrupo": "2B",
+    "nuevoIngreso": 2024,
+    "excluirIds": [46]
+}
 
 ### ==================== JUSTIFICANTES ====================
 
@@ -76,10 +112,11 @@ Content-Type: application/json
 {
     "tipo_justificante": "Enfermedad",
     "departamento": "Enfermeria",
-    "alumno_id": 2,
+    "alumno_id": 1,
     "tutor": "Ana García",
     "motivo": "Gripe",
     "fecha_inicio": "2025-06-30",
+    "fecha_regreso": "2025-07-03",
     "tiempo_dias": 3
 }
 
@@ -89,11 +126,12 @@ Content-Type: application/json
 
 {
     "tipo_justificante": "Familiar",
-    "departamento": "Perfectura",
+    "departamento": "Prefectura",
     "alumno_id": 2,
     "tutor": "Ana García",
     "motivo": "Asunto familiar",
     "fecha_inicio": "2025-06-30",
+    "fecha_regreso": "2025-07-11",
     "tiempo_dias": 11
 }
 
@@ -132,3 +170,28 @@ Content-Type: application/json
 
 ### Eliminar un registro
 DELETE {{baseUrl}}/api/entradas-salidas/2
+
+### ==================== LOGIN ====================
+
+# Login para obtener token
+POST {{baseUrl}}/api/users/login
+Content-Type: application/json
+
+{
+    "nombre": "admin",
+    "contraseña": "123456"
+}
+
+### ==================== ALUMNOS (alta masiva) ====================
+
+# Reemplaza <TOKEN> por el token obtenido del login
+POST {{baseUrl}}/api/alumnos/bulk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tYnJlIjoiYWRtaW4iLCJyb2wiOiJEaXJlY2Npb24iLCJpYXQiOjE3NTI0Njg5NDgsImV4cCI6MTc1MjU1NTM0OH0.ZRZafSwFXuRiMGR8WdDbEfJ81heqsQyRNfYdNt0bf2Q
+Content-Type: application/json
+
+{
+    "alumnos": [
+        { "nombre": "Juan Pérez", "grupo": "1A", "turno": "Matutino", "ingreso": 2024 },
+        { "nombre": "María López", "grupo": "1A", "turno": "Matutino", "ingreso": 2024 }
+    ]
+}

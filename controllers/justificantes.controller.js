@@ -4,7 +4,11 @@ const pool = require('../config/db.config');
 exports.getAllJustificantes = async (req, res) => {
     try {
         const [rows] = await pool.query(`
-            SELECT j.*, a.nombre as nombre_alumno 
+            SELECT j.*, j.creado_por, a.nombre as nombre_alumno, a.grupo as grupo_alumno,
+                   (SELECT COUNT(*) FROM Justificantes 
+                    WHERE alumno_id = j.alumno_id 
+                    AND MONTH(fecha_inicio) = MONTH(CURDATE()) 
+                    AND YEAR(fecha_inicio) = YEAR(CURDATE())) as total_justificantes
             FROM Justificantes j 
             JOIN Alumnos a ON j.alumno_id = a.id
         `);
@@ -18,7 +22,11 @@ exports.getAllJustificantes = async (req, res) => {
 exports.getJustificanteById = async (req, res) => {
     try {
         const [rows] = await pool.query(`
-            SELECT j.*, a.nombre as nombre_alumno 
+            SELECT j.*, j.creado_por, a.nombre as nombre_alumno, a.grupo as grupo_alumno,
+                   (SELECT COUNT(*) FROM Justificantes 
+                    WHERE alumno_id = j.alumno_id 
+                    AND MONTH(fecha_inicio) = MONTH(CURDATE()) 
+                    AND YEAR(fecha_inicio) = YEAR(CURDATE())) as total_justificantes
             FROM Justificantes j 
             JOIN Alumnos a ON j.alumno_id = a.id 
             WHERE j.id = ?
@@ -43,21 +51,36 @@ exports.createJustificante = async (req, res) => {
             tutor,
             motivo,
             fecha_inicio,
+            fecha_regreso,
             tiempo_dias
         } = req.body;
+
+        // Validar traslape de fechas para el mismo alumno
+        const [overlap] = await pool.query(
+            `SELECT * FROM Justificantes 
+             WHERE alumno_id = ? 
+             AND (
+                 (fecha_inicio <= ? AND fecha_regreso >= ?)
+             )`,
+            [alumno_id, fecha_regreso, fecha_inicio]
+        );
+        if (overlap.length > 0) {
+            return res.status(400).json({ message: 'El alumno ya tiene un justificante que abarca parte o todo ese periodo.' });
+        }
 
         const [result] = await pool.query(
             `INSERT INTO Justificantes (
                 tipo_justificante, departamento, alumno_id, tutor, 
-                motivo, fecha_inicio, tiempo_dias
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                motivo, fecha_inicio, fecha_regreso, tiempo_dias, creado_por
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [tipo_justificante, departamento, alumno_id, tutor, 
-             motivo, fecha_inicio, tiempo_dias]
+             motivo, fecha_inicio, fecha_regreso, tiempo_dias, req.user.id]
         );
         
         res.status(201).json({
             id: result.insertId,
-            ...req.body
+            ...req.body,
+            creado_por: req.user.id
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -74,6 +97,7 @@ exports.updateJustificante = async (req, res) => {
             tutor,
             motivo,
             fecha_inicio,
+            fecha_regreso,
             tiempo_dias
         } = req.body;
 
@@ -85,10 +109,11 @@ exports.updateJustificante = async (req, res) => {
                 tutor = ?,
                 motivo = ?,
                 fecha_inicio = ?,
+                fecha_regreso = ?,
                 tiempo_dias = ?
             WHERE id = ?`,
             [tipo_justificante, departamento, alumno_id, tutor,
-             motivo, fecha_inicio, tiempo_dias, req.params.id]
+             motivo, fecha_inicio, fecha_regreso, tiempo_dias, req.params.id]
         );
         
         if (result.affectedRows === 0) {
